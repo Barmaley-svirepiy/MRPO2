@@ -1,16 +1,56 @@
-# This is a sample Python script.
+from Department import Department
+from Department_repository import Department_repository
+from Dutes_repository import Dutes_repository
+from Dutes import Dutes
+from org_repository import Org_repository
+from Organization import Organization
+from Skills import Skills
+from skills_repository import Skills_repository
+from User import User
+from user_repository import User_repository
+from Vacancy import Vacancy
+from Vacancy_repository import Vacancy_repository
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+
+dep_rep = Department_repository()
+dutes_rep = Dutes_repository()
+org_rep = Org_repository()
+skill_rep = Skills_repository()
+user_rep = User_repository()
+vac_rep = Vacancy_repository()
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+dute1 = Dutes(1, 'asdqwe')
+dutes_rep.save_dute(dute1)
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+vac1 = Vacancy(1 , 123)
+vac1.dutes.append(dute1)
+vac_rep.save_vacancy(vac1)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+dep1 = Department(1, 'dep1')
+dep1.needDutes.append(dute1)
+dep1.vacansy.append(vac1)
+dep_rep.save_department(dep1)
+
+
+org1 = Organization(1, 'org1', 'qweewq')
+org1.departments.append(dep1)
+org_rep.save_org(org1)
+
+skill1 = Skills(1 , 'skill1')
+skill_rep.save_skills(skill1)
+
+user1 = User(1, 'user1', 12)
+user1.skills.append(skill1)
+user_rep.save_user(user1)
+
+
+user_data = user_rep.find_user_by_id(1)
+dep_data = dep_rep.find_department_by_id(1)
+
+print(f'User: {user_data.name}')
+print(f'Department: {dep_data.name}')
+print(f'Открытые вакансии:')
+for i in dep_data.vacansy:
+    print(i.name)
