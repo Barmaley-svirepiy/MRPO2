@@ -4,6 +4,7 @@ from Classes.User import User
 from Classes.Vacancy import Vacancy
 from BusinessRules import BusinessRules
 
+
 class TestBusinessRules(unittest.TestCase):
 
     def test_filter_vacancy(self):
@@ -57,6 +58,45 @@ class TestBusinessRules(unittest.TestCase):
 
         # Проверка, что вакансии упорядочены в порядке популярности
         self.assertEqual(business_rules.popular_vacancy(), [("Software Engineer", 2), ("Data Analyst", 2)])
+
+    def test_Otklick_success(self):
+        # Создаем тестовые данные
+        user = User("TestUser", ["Python", "SQL"], age=1)
+        vac = Vacancy("TestVacancy", ["Python", "SQL"], 50000)
+        business_rules = BusinessRules([vac])
+
+        # Вызываем функцию
+        result = business_rules.Otklick(user, vac)
+
+        # Проверяем, что результат равен 1 (успешное отклик)
+        self.assertEqual(result, 1)
+
+    def test_Otklick_already_applied(self):
+        # Создаем тестовые данные
+        user = User("TestUser", ["Python", "SQL"], age=1)
+        vac = Vacancy("TestVacancy", ["Python", "SQL"], 50000)
+        vac.seekers.append(user)  # Добавляем пользователя в список откликнувшихся
+        business_rules = BusinessRules([vac])
+
+        # Вызываем функцию
+        result = business_rules.Otklick(user, vac)
+
+        # Проверяем, что результат равен -1 (уже подавали)
+        self.assertEqual(result, -1)
+
+    def test_Otklick_not_suitable(self):
+        # Создаем тестовые данные
+        user = User(1, "TestUser", age=1)  # Навыки не совпадают с вакансией
+        user.skills = ['Java', "python"]
+        vac = Vacancy(1, "TestVacancy", salary=50000)
+        vac.skills = ["HTML", "JS"]
+        business_rules = BusinessRules([vac])
+
+        # Вызываем функцию
+        result = business_rules.Otklick(user, vac)
+
+        # Проверяем, что результат равен -1 (пользователь не подходит)
+        self.assertEqual(result, -1)
 
 
 if __name__ == '__main__':

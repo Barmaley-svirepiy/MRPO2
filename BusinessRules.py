@@ -2,7 +2,6 @@ class BusinessRules():
     def __init__(self, vac_rep):
         self.vacs = vac_rep
 
-
 #функция поиска вакансии по зарплате
     def filter_vacancy(self, min_salary, max_salary):
         suitable_vac = []
@@ -31,3 +30,17 @@ class BusinessRules():
                     vacancy_count[vacancy.name] = 1
         popular_vacancies = sorted(vacancy_count.items(), key=lambda x: x[1], reverse=True)
         return popular_vacancies
+
+#Функция отклика на вакансию
+    def Otklick(self, user, vac):
+        if vac in self.vacs:
+            if self.SuitableUser(user, vac):
+                if self.NotOnOneVacancy(user, vac):
+                    vac.seekers.append(user)
+                    return 1
+                else:
+                    print("Уже подавали")
+                    return -1
+            else:
+                print("Вы к сожалению не подходите")
+                return -1
