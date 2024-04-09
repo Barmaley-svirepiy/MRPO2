@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <User>
+    <instance id="1">
+      <id>1</id>
+      <name>Pasha</name>
+      <age>31</age>
+      <skills>[]</skills>
+    </instance>
+    <instance id="2">
+      <id>2</id>
+      <name>Pasha</name>
+      <age>31</age>
+      <skills>[]</skills>
+    </instance>
+    <instance id="3">
+      <id>3</id>
+      <name>qwe</name>
+      <age>30</age>
+      <skills>[]</skills>
+    </instance>
+  </User>
+  <Organization>
+    <instance id="2">
+      <id>2</id>
+      <name>Golden Apple</name>
+      <addr>Kolotushkina house.</addr>
+      <departments>[]</departments>
+    </instance>
+    <instance id="1">
+      <id>1</id>
+      <name>Golden Apple</name>
+      <addr>Kolotushkina house.</addr>
+      <departments>[]</departments>
+    </instance>
+  </Organization>
+</root>

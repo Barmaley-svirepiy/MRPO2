@@ -1,61 +1,51 @@
-from Classes.Department import Department
-from Repositories.Department_repository import Department_repository
-from Repositories.Dutes_repository import Dutes_repository
-from Classes.Dutes import Dutes
-from Repositories.Org_repository import Org_repository
 from Classes.Organization import Organization
-from Classes.Skills import Skills
-from Repositories.Skills_repository import Skills_repository
 from Classes.User import User
-from Repositories.User_repository import User_repository
-from Classes.Vacancy import Vacancy
-from Repositories.Vacancy_repository import Vacancy_repository
+from Repositories.XMLRepos import XMLRepository
 
 
-
-dep_rep = Department_repository()
-dutes_rep = Dutes_repository()
-org_rep = Org_repository()
-skill_rep = Skills_repository()
-user_rep = User_repository()
-vac_rep = Vacancy_repository()
+def save_to_xml(user_data):
+    repository = XMLRepository("base.xml")
+    repository.save(user_data)
 
 
-dute1 = Dutes(1, 'asdqwe', 'aqwe')
-dutes_rep.save_dute(dute1)
+def find_users_by_age(name):
+    user_repository = XMLRepository("user.xml")
+    query = f"//item[name='{name}']"
+    users = user_repository.find()
+    return users
 
 
-vac1 = Vacancy(1, 'vac1', 123)
-vac1.dutes.append(dute1)
+if __name__ == "__main__":
+    user_data = {
+        'id': 1,
+        'name': "Pasha",
+        'age': 31,
+    }
+    user = User(**user_data)  # Создаем экземпляр класса User из словаря user_data
+    save_to_xml(user)
+    user_data = {
+        'id': 2,
+        'name': "Pasha",
+        'age': 31,
+    }
+    user = User(**user_data)  # Создаем экземпляр класса User из словаря user_data
+    save_to_xml(user)
+    user = User(3, 'qwe', 30)
+    save_to_xml(user)
 
-vac_rep.save_vacancy(vac1)
-vac2 = Vacancy(2, 'vac2', 321)
-vac2.dutes.append(dute1)
-vac_rep.save_vacancy(vac2)
+    org_data = {
+        'id': 2,
+        'name': 'Golden Apple',
+        'addr': 'Kolotushkina house.'
+    }
+    org = Organization(**org_data)
+    save_to_xml(org)
+    org_data = {
+        'id': 1,
+        'name': 'Golden Apple',
+        'addr': 'Kolotushkina house.'
+    }
+    org = Organization(**org_data)
+    save_to_xml(org)
 
-dep1 = Department(1, 'dep1')
-dep1.vacansy.append(vac1)
-dep1.vacansy.append(vac2)
-dep_rep.save_department(dep1)
-
-
-org1 = Organization(1, 'org1', 'qweewq')
-org1.departments.append(dep1)
-org_rep.save_org(org1)
-
-skill1 = Skills(1 , 'skill1')
-skill_rep.save_skills(skill1)
-
-user1 = User(1, 'user1', 12)
-user1.skills.append(skill1)
-user_rep.save_user(user1)
-vac1.seekers.append(user1)
-
-user_data = user_rep.find_user_by_id(1)
-dep_data = dep_rep.find_department_by_id(1)
-
-
-print(f'Department: {dep_data.name}')
-print(f'Открытые вакансии:')
-for i in dep_data.vacansy:
-    print(i.name)
+    print('')
