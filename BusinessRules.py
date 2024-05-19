@@ -1,42 +1,20 @@
-class BusinessRules():
-    def __init__(self, vac_rep):
-        self.vacs = vac_rep
+from db_setup import UserModel, VacancyModel, SeekerModel
 
-#функция поиска вакансии по зарплате
-    def filter_vacancy(self, min_salary, max_salary):
-        suitable_vac = []
-        for i in self.vacs:
-            if min_salary <= i.salary <= max_salary:
-                suitable_vac.append(i)
-        return suitable_vac
+class BusinessRules:
+    def __init__(self, session):
+        self.session = session
+        self.vacs = session.query(VacancyModel).all()
 
+    def Otklick(self, user_id, vac_id):
+        user = self.session.query(UserModel).filter_by(id=user_id).one()
+        vac = self.session.query(VacancyModel).filter_by(id=vac_id).one()
 
-#функция проверки того что пользователь не подал 2 заявки на 1 вакансию
-    def NotOnOneVacancy(self, user, vac):
-        return False if user in vac.seekers else True
-
-# функция проверки подходит ли пользователь на вакансию по навыкам
-    def SuitableUser(self, user, vacancy):
-        return set(vacancy.skills).issubset(set(user.skills))
-
-#функция вывода самых популярных вакансий
-    def popular_vacancy(self):
-        vacancy_count = {}
-        for vacancy in self.vacs:
-            for user in vacancy.seekers:
-                if vacancy.name in vacancy_count:
-                    vacancy_count[vacancy.name] += 1
-                else:
-                    vacancy_count[vacancy.name] = 1
-        popular_vacancies = sorted(vacancy_count.items(), key=lambda x: x[1], reverse=True)
-        return popular_vacancies
-
-#Функция отклика на вакансию
-    def Otklick(self, user, vac):
         if vac in self.vacs:
             if self.SuitableUser(user, vac):
                 if self.NotOnOneVacancy(user, vac):
-                    vac.seekers.append(user)
+                    seeker = SeekerModel(user_id=user.id, vacancy_id=vac.id)
+                    self.session.add(seeker)
+                    self.session.commit()
                     return 1
                 else:
                     print("Уже подавали")
@@ -44,3 +22,11 @@ class BusinessRules():
             else:
                 print("Вы к сожалению не подходите")
                 return -1
+
+    def NotOnOneVacancy(self, user, vac):
+        return not self.session.query(SeekerModel).filter_by(user_id=user.id, vacancy_id=vac.id).count() > 0
+
+    def SuitableUser(self, user, vacancy):
+        user_skills = set(skill.id for skill in user.skills)
+        vac_skills = set(skill.id for skill in vacancy.skills)
+        return vac_skills.issubset(user_skills)

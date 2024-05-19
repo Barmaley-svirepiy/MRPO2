@@ -1,51 +1,32 @@
 from Classes.Organization import Organization
 from Classes.User import User
 from Repositories.XMLRepos import XMLRepository
+from Repositories.sqlRepos import SQLAlchemyRepository
+from BusinessRules import BusinessRules
+from db_setup import UserModel, SkillModel, VacancyModel, session
+from Classes.Vacancy import Vacancy
+import os
 
 
-def save_to_xml(user_data):
-    repository = XMLRepository("base.xml")
-    repository.save(user_data)
+def main():
+    user_repo = SQLAlchemyRepository(session)
 
+    # Создаем экземпляры
+    user = UserModel(id=1, name="Pasha", age=31)
+    skill = SkillModel(id=1, name="Python")
+    user.skills.append(skill)
 
-def find_users_by_age(name):
-    user_repository = XMLRepository("user.xml")
-    query = f"//item[name='{name}']"
-    users = user_repository.find()
-    return users
+    vacancy = VacancyModel(id=1, name="Developer", salary=120000.0)
+    vacancy.skills.append(skill)
+
+    user_repo.save(user)
+    user_repo.save(skill)
+    user_repo.save(vacancy)
+
+    bus = BusinessRules(session)
+    result = bus.Otklick(user_id=1, vac_id=1)
+    print(result)  # Вывод: 1 если успешно
 
 
 if __name__ == "__main__":
-    user_data = {
-        'id': 1,
-        'name': "Pasha",
-        'age': 31,
-    }
-    user = User(**user_data)  # Создаем экземпляр класса User из словаря user_data
-    save_to_xml(user)
-    user_data = {
-        'id': 2,
-        'name': "Pasha",
-        'age': 31,
-    }
-    user = User(**user_data)  # Создаем экземпляр класса User из словаря user_data
-    save_to_xml(user)
-    user = User(3, 'qwe', 30)
-    save_to_xml(user)
-
-    org_data = {
-        'id': 2,
-        'name': 'Golden Apple',
-        'addr': 'Kolotushkina house.'
-    }
-    org = Organization(**org_data)
-    save_to_xml(org)
-    org_data = {
-        'id': 1,
-        'name': 'Golden Apple',
-        'addr': 'Kolotushkina house.'
-    }
-    org = Organization(**org_data)
-    save_to_xml(org)
-
-    print('')
+    main()
